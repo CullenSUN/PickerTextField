@@ -8,26 +8,22 @@
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 //
-//  PickerTextField.m
+//  PickerTextFieldHandler.m
 //  http://creiapp.blogspot.hk/2012/11/uitextfield-with-input-from-uipickerview.html
 //
 
-
-#import <UIKit/UIKit.h>
 #import "PickerTextFieldHandler.h"
+#import "PickerTextField.h"
+@implementation PickerTextFieldHandler
 
-@interface PickerTextField : UITextField<UIPickerViewDelegate,UIPickerViewDataSource> {
-	NSArray *sourceStringsArray;
-    UIPickerView * picker;
-	int pickedIndex;
-    PickerTextFieldHandler * deleHandler;
+#pragma mark -
+#pragma mark UITextFieldDelegate
+
+-(void)textFieldDidBeginEditing:(UITextField *)textField{
+    
+    [(PickerTextField*) textField pickerTextFieldDidBeginEditing];
     
 }
-@property (nonatomic, retain) UIPickerView *picker;
-@property (nonatomic, assign) int pickedIndex;
 
--(void)setDataSource:(NSArray *) sourceArray andPlaceHolder:(NSString*)theholder;
--(void)pickerTextFieldDidBeginEditing;
-    
 
 @end

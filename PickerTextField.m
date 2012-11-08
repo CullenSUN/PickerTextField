@@ -12,8 +12,12 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 //  http://creiapp.blogspot.hk/2012/11/uitextfield-with-input-from-uipickerview.html
 //
 
-
 #import "PickerTextField.h"
+@interface PickerTextField()
+- (void) setup;
+@end
+
+
 
 @implementation PickerTextField
 @synthesize pickedIndex,picker;
@@ -23,37 +27,41 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     
     self = [super initWithFrame:frame];
     if (self) {
-        
-        // Initialization code.
-        [super setDelegate:self];
-        self.pickedIndex=-1;
-        
+        [self setup];
     }
     return self;
 }
--(void) awakeFromNib{
+- (void) awakeFromNib{
     [super awakeFromNib];
-    [super setDelegate:self];
-    self.pickedIndex=-1;
+    [self setup];
+    
 }
 
+- (void) setup{
+    self.pickedIndex=-1;
+    deleHandler=[[PickerTextFieldHandler alloc]init];
+    self.delegate=(id)deleHandler;
+    
+}
 
 -(void)setDataSource:(NSArray *) sourceArray andPlaceHolder:(NSString*)theholder
 {
     
     [self setPlaceholder:theholder];
-	sourceStringsArray=[[NSArray alloc] initWithArray:sourceArray];
+    sourceStringsArray=[[NSArray alloc] initWithArray:sourceArray];
     //setup pickerview here
+
     if (!self.picker) {
         UIPickerView * _picker=[[UIPickerView alloc] init];
         self.picker=[_picker autorelease];
         self.inputView=self.picker;
+        
     }
     
-	[self.picker setFrame:CGRectMake(0, 40, 320, 216)];
-	self.picker.delegate=self;
-	self.picker.dataSource=self;
-	self.picker.showsSelectionIndicator=YES;
+    [self.picker setFrame:CGRectMake(0, 40, 320, 216)];
+    self.picker.delegate=self;
+    self.picker.dataSource=self;
+    self.picker.showsSelectionIndicator=YES;
     
     if (self.pickedIndex!=-1) {
         [self setText:[sourceStringsArray objectAtIndex:self.pickedIndex]];
@@ -67,23 +75,23 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #pragma mark PickerViewDelegate
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
     
-	return 1;
+    return 1;
 }
 
 - (CGFloat)pickerView:(UIPickerView *)pickerView rowHeightForComponent:(NSInteger)component
 {
     
-	return 50;
+    return 50;
 }
 
 - (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
     
-	return [sourceStringsArray count];
+    return [sourceStringsArray count];
 }
 
 
 - (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row
-		  forComponent:(NSInteger)component reusingView:(UIView *)view
+          forComponent:(NSInteger)component reusingView:(UIView *)view
 {
     
     UILabel *cellLable = (UILabel*) view;
@@ -98,33 +106,28 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     }
     
     
-	cellLable.text=[sourceStringsArray objectAtIndex:row];
-	return cellLable ;
+    cellLable.text=[sourceStringsArray objectAtIndex:row];
+    return cellLable ;
 }
 
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
-	self.text=[sourceStringsArray objectAtIndex:row];
-	self.pickedIndex=row;
+    self.text=[sourceStringsArray objectAtIndex:row];
+    self.pickedIndex=row;
 }
 
 #pragma mark -
-#pragma mark UITextFieldDelegate
-
-
--(void)textFieldDidBeginEditing:(UITextField *)textField{
-    
+#pragma mark Forwarded UITextFieldDelegate
+-(void) pickerTextFieldDidBeginEditing{
     if (self.pickedIndex==-1) {
-        self.pickedIndex=0;
-        [self setText:[sourceStringsArray objectAtIndex:self.pickedIndex]];
-    }
-    [self.picker selectRow:self.pickedIndex inComponent:0 animated:NO];
-    
-    
+           self.pickedIndex=0;
+           [self setText:[sourceStringsArray objectAtIndex:self.pickedIndex]];
+        }
+      [self.picker selectRow:self.pickedIndex inComponent:0 animated:NO];
 }
-
 - (void)dealloc {
-	[sourceStringsArray release];
-	[picker release];
+    [sourceStringsArray release];
+    [deleHandler release];
+    [picker release];
     [super dealloc];
 }
 
